@@ -4,14 +4,14 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: "./src/images/",
-      extraResource: [
-        "./src/apkdata",
-        "./src/uploads",
-        "./src/outputs",
-        "./src/utils",
-        "./src/images"
-      ]
+    icon: '/Users/rat4er/Documents/Work/RuStoreRepos/apk-generator-desktop/apk-generator/src/images/icon.icns',
+    extraResource: [
+      "./src/apkdata",
+      "./src/uploads",
+      "./src/outputs",
+      "./src/utils",
+      "./src/images"
+    ]
   },
   rebuildConfig: {},
   makers: [
@@ -33,6 +33,10 @@ module.exports = {
       name: '@electron-forge/maker-rpm',
       config: {},
     },
+    {
+      name: '@electron-forge/maker-dmg',
+      format: 'ULFO'
+    }
   ],
   plugins: [
     {

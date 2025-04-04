@@ -99,8 +99,10 @@
 </head>
 <body>
     <div class="container">
+        <!---
         <h1>APK Generator</h1>
         <h3>Learn how to create a keystore <a href="https://coderwall.com/p/r09hoq/android-generate-release-debug-keystores" target="_blank">here</a></h3>
+        -->
         <form id="apkForm">
             <label for="package_name">Package Name</label>
             <input type="text" id="package_name" name="package_name" placeholder="com.example.app" required>
@@ -114,16 +116,22 @@
             <label for="size_apk">Size APK (MB)</label>
             <input type="number" id="size_apk" name="size_apk" placeholder="Optional">
 
-            <label for="keystore_file">Keystore File</label>
+            <label for="keystore_choose">Used keystore?</label>
+            <select id="keystore_choose" name="keystore" onchange="changeFormVisibility(this)">
+                <option value="user">user</option>
+                <option value="default">default</option>
+            </select>
+
+            <label for="keystore_file" id="keystore_file_label">Keystore File</label>
             <input type="file" id="keystore_file" name="keystore_file" accept=".keystore, .jks" required>
 
-            <label for="keystore_alias">Keystore Alias</label>
+            <label for="keystore_alias" id="keystore_alias_label">Keystore Alias</label>
             <input type="text" id="keystore_alias" name="keystore_alias" placeholder="Alias Name" required>
 
-            <label for="keystore_keypass">Keystore Keypass</label>
+            <label for="keystore_keypass" id="keystore_keypass_label">Keystore Keypass</label>
             <input type="password" id="keystore_keypass" name="keystore_keypass" placeholder="••••••••" required>
 
-            <label for="keystore_pass">Keystore Pass</label>
+            <label for="keystore_pass" id="keystore_pass_label">Keystore Pass</label>
             <input type="password" id="keystore_pass" name="keystore_pass" placeholder="••••••••" required>
 
             <button type="submit">Generate APK</button>
@@ -174,6 +182,30 @@
     </script>
     --->
     <script>
+function changeFormVisibility (objDropDown)
+{
+    var value = objDropDown.options[objDropDown.selectedIndex].value;
+    console.log(value)
+    if (value == 'default') {
+        document.getElementById('keystore_file').style.display = 'none'
+        document.getElementById('keystore_file_label').style.display = 'none'
+        document.getElementById('keystore_alias_label').style.display = 'none'
+        document.getElementById('keystore_alias').style.display = 'none'
+        document.getElementById('keystore_keypass').style.display = 'none'
+        document.getElementById('keystore_keypass_label').style.display = 'none'
+        document.getElementById('keystore_pass').style.display = 'none'
+        document.getElementById('keystore_pass_label').style.display = 'none'
+    } else {
+        document.getElementById('keystore_file').style.display = ''
+        document.getElementById('keystore_file_label').style.display = ''
+        document.getElementById('keystore_alias_label').style.display = ''
+        document.getElementById('keystore_alias').style.display = ''
+        document.getElementById('keystore_keypass').style.display = ''
+        document.getElementById('keystore_keypass_label').style.display = ''
+        document.getElementById('keystore_pass').style.display = ''
+        document.getElementById('keystore_pass_label').style.display = ''
+    }
+}
 document.getElementById('apkForm').addEventListener('submit', async function (event) {
     event.preventDefault();
 

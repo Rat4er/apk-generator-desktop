@@ -1,5 +1,5 @@
 {
   "devDependencies": {
-    "uuid": "^11.1.0"
+    "@electron-forge/maker-dmg": "^7.8.0"
   }
 }

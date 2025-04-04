@@ -9,6 +9,7 @@ const { platform } = require('os');
 
 const UPLOAD_FOLDER = path.join(process.resourcesPath, 'uploads');
 const OUTPUTS_FOLDER = path.join(process.resourcesPath, 'outputs');
+const DEFAULT_KEYSTORE_PATH = path.join(process.resourcesPath, 'utils', 'cert', 'keystore.jks')
 fs.mkdirSync(UPLOAD_FOLDER, { recursive: true });
 fs.mkdirSync(OUTPUTS_FOLDER, { recursive: true });
 const apktoolPath = path.join(process.resourcesPath, 'utils', 'apktool_2.9.3.jar');
@@ -80,8 +81,8 @@ async function editApktoolConf(packageName, versionCode, versionName) {
 app.whenReady().then(() => {
     const win = new BrowserWindow({
         icon: path.join(process.resourcesPath, 'images', 'icon.png'),
-        width: 720,
-        height: 1280,
+        width: 600,
+        height: 800,
         autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -95,10 +96,15 @@ app.whenReady().then(() => {
     ipcMain.handle('generate-apk', async (event, args) => {
         try {
             const { packageName, versionCode, versionName, sizeApk, keystoreFile, keystoreAlias, keystoreKeypass, keystorePass } = args;
-            const keystorePath = path.join(UPLOAD_FOLDER, `${uuid.v4()}`);
-            fs.writeFileSync(keystorePath, Buffer.from(keystoreFile.buffer));
-            const apkPath = await generateApk(packageName, versionCode, versionName, sizeApk, keystorePath, keystoreAlias, keystoreKeypass, keystorePass);
-
+            var apkPath = ''
+            if(keystoreFile != null) {
+                const keystorePath = path.join(UPLOAD_FOLDER, `${uuid.v4()}`);
+                fs.writeFileSync(keystorePath, Buffer.from(keystoreFile.buffer));
+                apkPath = await generateApk(packageName, versionCode, versionName, sizeApk, keystorePath, keystoreAlias, keystoreKeypass, keystorePass);
+            }
+            else {
+                apkPath = await generateApk(packageName, versionCode, versionName, sizeApk, DEFAULT_KEYSTORE_PATH, 'mainkey', 'password', 'password');
+            }
             const { filePath } = await dialog.showSaveDialog({
                 title: 'Save APK',
                 defaultPath: path.basename(apkPath),

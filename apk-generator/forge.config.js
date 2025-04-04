@@ -23,11 +23,7 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-zip',
-      platforms: ['darwin'],
-    },
-    {
-      name: '@electron-forge/maker-deb',
-      config: {},
+      platforms: ['darwin', 'win32', 'linux'],
     },
     {
       name: '@electron-forge/maker-rpm',
@@ -36,6 +32,13 @@ module.exports = {
     {
       name: '@electron-forge/maker-dmg',
       format: 'ULFO'
+    },
+    {
+      name: '@electron-forge/maker-flatpak',
+      config: {
+        options: {
+        }
+      }
     }
   ],
   plugins: [

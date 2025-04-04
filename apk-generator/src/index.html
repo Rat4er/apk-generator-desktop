@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
             background-color: #222222;
             color: #333;
         }
+
         .container {
             /*max-width: 600px;*/
             /*margin: 50px auto;*/
@@ -21,58 +23,75 @@
             padding: 30px;
             padding-bottom: 10px;
         }
+
         h1 {
             text-align: center;
             color: #007bff;
         }
+
         h3 {
             text-align: center;
             font-size: 16px;
             color: #f8f9fa;
         }
+
         h3 a {
             color: #007bff;
             text-decoration: none;
         }
+
         h3 a:hover {
             text-decoration: underline;
         }
+
         footer {
             text-align: center;
-            padding: 20px 0;
+            padding: px 0;
             font-size: 14px;
             background-color: #222222;
             position: fixed;
             width: 100%;
             /*margin-top: 30px;*/
         }
+
         footer a {
             color: #007bff;
             text-decoration: none;
         }
+
         form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
             background-color: #222222;
         }
+
         label {
-            font-weight: 500;
+            font-weight: 300;
             color: #f8f9fa;
         }
-        input, select, button {
-            padding: 12px;
+
+        input,
+        select,
+        button {
+            padding: 5px;
             border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
+            border-radius: 19px;
+            font-size: 15px;
             background-color: #222222;
             color: #f8f9fa;
+            padding-left: 15px;
+            padding-left: 15px;
         }
-        input:focus, select:focus, button:focus {
+
+        input:focus,
+        select:focus,
+        button:focus {
             outline: none;
             border-color: #007bff;
             box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
         }
+
         button {
             background-color: #007bff;
             color: #fff;
@@ -80,23 +99,28 @@
             font-weight: bold;
             transition: background-color 0.3s;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
         .message {
             margin-top: 20px;
             text-align: center;
             font-size: 16px;
             color: #555;
         }
+
         .message.success {
             color: #28a745;
         }
+
         .message.error {
             color: #dc3545;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!---
@@ -123,16 +147,16 @@
             </select>
 
             <label for="keystore_file" id="keystore_file_label">Keystore File</label>
-            <input type="file" id="keystore_file" name="keystore_file" accept=".keystore, .jks" required>
+            <input type="file" id="keystore_file" name="keystore_file" accept=".keystore, .jks">
 
             <label for="keystore_alias" id="keystore_alias_label">Keystore Alias</label>
-            <input type="text" id="keystore_alias" name="keystore_alias" placeholder="Alias Name" required>
+            <input type="text" id="keystore_alias" name="keystore_alias" placeholder="Alias Name">
 
             <label for="keystore_keypass" id="keystore_keypass_label">Keystore Keypass</label>
-            <input type="password" id="keystore_keypass" name="keystore_keypass" placeholder="••••••••" required>
+            <input type="password" id="keystore_keypass" name="keystore_keypass" placeholder="••••••••">
 
             <label for="keystore_pass" id="keystore_pass_label">Keystore Pass</label>
-            <input type="password" id="keystore_pass" name="keystore_pass" placeholder="••••••••" required>
+            <input type="password" id="keystore_pass" name="keystore_pass" placeholder="••••••••">
 
             <button type="submit">Generate APK</button>
         </form>
@@ -141,37 +165,77 @@
     <footer>
         Created by <strong>L3</strong> with ❤️ for <a href="https://rustore.ru" target="_blank">RuStore</a>
     </footer>
-<!---
     <script>
+        function changeFormVisibility(objDropDown) {
+            var value = objDropDown.options[objDropDown.selectedIndex].value;
+            console.log(value)
+            if (value == 'default') {
+                document.getElementById('keystore_file').style.display = 'none'
+                document.getElementById('keystore_file_label').style.display = 'none'
+                document.getElementById('keystore_alias_label').style.display = 'none'
+                document.getElementById('keystore_alias').style.display = 'none'
+                document.getElementById('keystore_keypass').style.display = 'none'
+                document.getElementById('keystore_keypass_label').style.display = 'none'
+                document.getElementById('keystore_pass').style.display = 'none'
+                document.getElementById('keystore_pass_label').style.display = 'none'
+            } else {
+                document.getElementById('keystore_file').style.display = ''
+                document.getElementById('keystore_file_label').style.display = ''
+                document.getElementById('keystore_alias_label').style.display = ''
+                document.getElementById('keystore_alias').style.display = ''
+                document.getElementById('keystore_keypass').style.display = ''
+                document.getElementById('keystore_keypass_label').style.display = ''
+                document.getElementById('keystore_pass').style.display = ''
+                document.getElementById('keystore_pass_label').style.display = ''
+            }
+        }
         document.getElementById('apkForm').addEventListener('submit', async function (event) {
             event.preventDefault();
 
             const formData = new FormData(this);
+            const dropDown = document.getElementById('keystore_choose')
             const messageDiv = document.getElementById('message');
             messageDiv.textContent = 'Generating APK...';
             messageDiv.className = 'message';
+            var args = {}
 
+            if (dropDown.value == 'user') {
+                const keystoreFile = formData.get('keystore_file');
+                const buffer = await keystoreFile.arrayBuffer();
+                args = {
+                    packageName: formData.get('package_name'),
+                    versionCode: formData.get('version_code'),
+                    versionName: formData.get('version_name'),
+                    sizeApk: parseInt(formData.get('size_apk') || '0', 10),
+                    keystoreFile: {
+                        name: keystoreFile.name,
+                        buffer: [...new Uint8Array(buffer)]
+                    },
+                    keystoreAlias: formData.get('keystore_alias'),
+                    keystoreKeypass: formData.get('keystore_keypass'),
+                    keystorePass: formData.get('keystore_pass')
+                };
+            }
+            else {
+                args = {
+                    packageName: formData.get('package_name'),
+                    versionCode: formData.get('version_code'),
+                    versionName: formData.get('version_name'),
+                    sizeApk: parseInt(formData.get('size_apk') || '0', 10),
+                    keystoreFile: null,
+                    keystoreAlias: 'default',
+                    keystoreKeypass: 'default',
+                    keystorePass: 'default'
+                }
+            }
             try {
-                const response = await fetch('/generate_apk', {
-                    method: 'POST',
-                    body: formData
-                });
+                const response = await window.electron.generateApk(args);
 
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-                    a.download = 'generated.apk';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    messageDiv.textContent = 'APK generated successfully!';
+                if (response.success) {
+                    messageDiv.textContent = 'APK saved successfully!';
                     messageDiv.classList.add('success');
                 } else {
-                    const errorData = await response.json();
-                    messageDiv.textContent = `Error: ${errorData.error}`;
+                    messageDiv.textContent = `Error: ${response.error}`;
                     messageDiv.classList.add('error');
                 }
             } catch (error) {
@@ -180,71 +244,6 @@
             }
         });
     </script>
-    --->
-    <script>
-function changeFormVisibility (objDropDown)
-{
-    var value = objDropDown.options[objDropDown.selectedIndex].value;
-    console.log(value)
-    if (value == 'default') {
-        document.getElementById('keystore_file').style.display = 'none'
-        document.getElementById('keystore_file_label').style.display = 'none'
-        document.getElementById('keystore_alias_label').style.display = 'none'
-        document.getElementById('keystore_alias').style.display = 'none'
-        document.getElementById('keystore_keypass').style.display = 'none'
-        document.getElementById('keystore_keypass_label').style.display = 'none'
-        document.getElementById('keystore_pass').style.display = 'none'
-        document.getElementById('keystore_pass_label').style.display = 'none'
-    } else {
-        document.getElementById('keystore_file').style.display = ''
-        document.getElementById('keystore_file_label').style.display = ''
-        document.getElementById('keystore_alias_label').style.display = ''
-        document.getElementById('keystore_alias').style.display = ''
-        document.getElementById('keystore_keypass').style.display = ''
-        document.getElementById('keystore_keypass_label').style.display = ''
-        document.getElementById('keystore_pass').style.display = ''
-        document.getElementById('keystore_pass_label').style.display = ''
-    }
-}
-document.getElementById('apkForm').addEventListener('submit', async function (event) {
-    event.preventDefault();
-
-    const formData = new FormData(this);
-    const messageDiv = document.getElementById('message');
-    messageDiv.textContent = 'Generating APK...';
-    messageDiv.className = 'message';
-    const keystoreFile = formData.get('keystore_file');
-    const buffer = await keystoreFile.arrayBuffer();
-
-    try {
-        const args = {
-            packageName: formData.get('package_name'),
-            versionCode: formData.get('version_code'),
-            versionName: formData.get('version_name'),
-            sizeApk: parseInt(formData.get('size_apk') || '0', 10),
-            keystoreFile: {
-                name: keystoreFile.name,
-                buffer: [...new Uint8Array(buffer)]
-            },
-            keystoreAlias: formData.get('keystore_alias'),
-            keystoreKeypass: formData.get('keystore_keypass'),
-            keystorePass: formData.get('keystore_pass')
-        };
-
-        const response = await window.electron.generateApk(args);
-
-        if (response.success) {
-            messageDiv.textContent = 'APK saved successfully!';
-            messageDiv.classList.add('success');
-        } else {
-            messageDiv.textContent = `Error: ${response.error}`;
-            messageDiv.classList.add('error');
-        }
-    } catch (error) {
-        messageDiv.textContent = `Error: ${error.message}`;
-        messageDiv.classList.add('error');
-    }
-});
-        </script>
 </body>
+
 </html>
